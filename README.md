@@ -62,9 +62,11 @@ Vá até a opção de configuração
 
 ![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/a5565d06-d29f-4be4-be2f-8a1d152616f2)
 
-Habilite o acesso anônimo de blob
+Habilite o acesso anônimo de blob e clique em salvar. 
+
 ![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/4bc9881c-00c2-4cfe-9055-538cbbe3ab06)
 
+Sem esta alteração não será habilita a opção para criar um novo contêiner com as configurações anônimas necessárias para o teste.  
 
 ## Carregar documentos no Armazenamento do Azure
 No painel de menu esquerdo, selecione Contêineres.
@@ -72,13 +74,99 @@ No painel de menu esquerdo, selecione Contêineres.
 ![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/2f95dc9a-7763-4da0-a616-f1b87be9b68e)
 
 Selecione + Contêiner. Um painel do lado direito é aberto.
-
-
 Insira as seguintes configurações e clique em Criar:
 Nome: café-comentários
 Nível de acesso público: Contêiner (acesso de leitura anônimo para contêineres e blobs)
 Avançado: sem alterações.
 Em uma nova guia do navegador, baixe as revisões de café compactadas do e extraia os arquivos para a pasta de comentários.https://aka.ms/mslearn-coffee-reviews
 
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/68cc3f56-cba1-4413-bc79-8752d05201db)
+
+
 No portal do Azure, selecione seu contêiner de avaliações de café. No contêiner, selecione Carregar.
 
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/511bf72e-5d29-408d-b06d-f8c77138d25b)
+
+No painel Carregar blob, selecione Selecionar um arquivo.
+
+Na janela do Explorer, selecione todos os arquivos na pasta de comentários, selecione Abrir e selecione Carregar.
+
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/a8158224-436a-4316-9d62-cf9217ec9af0)
+
+Depois que o carregamento for concluído, você poderá fechar o painel Carregar blob. Seus documentos agora estão em seu recipiente de armazenamento de revisões de café.
+Indexar os documentos
+Depois de ter os documentos em armazenamento, você pode usar a Pesquisa de IA do Azure para extrair insights dos documentos. O portal do Azure fornece um assistente de Importação de dados. Com esse assistente, você pode criar automaticamente um índice e um indexador para fontes de dados com suporte. Você usará o assistente para criar um índice e importar seus documentos de pesquisa do armazenamento para o índice de Pesquisa de IA do Azure.
+
+No portal do Azure, navegue até seu recurso de Pesquisa de IA do Azure. Na página Visão geral, selecione Importar dados.
+
+
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/3cc67ac9-a663-4303-a998-094c7ec1adb8)
+
+Na página Conectar aos seus dados, na lista Fonte de Dados, selecione Armazenamento de Blobs do Azure. Conclua os detalhes do armazenamento de dados com os seguintes valores:
+Fonte de dados: Armazenamento de Blobs do Azure
+Nome da fonte de dados: coffee-customer-data
+Dados a serem extraídos: conteúdo e metadados
+Modo de análise: Padrão
+Cadeia de conexão: *Selecione Escolher uma conexão existente. Selecione sua conta de armazenamento, selecione o contêiner de revisões de café e clique em Selecionar.
+Autenticação de identidade gerenciada: Nenhuma
+Nome do contêiner: essa configuração é preenchida automaticamente depois que você escolhe uma conexão existente.
+Pasta Blob: deixe isso em branco.
+Descrição: Comentários a Fourth Coffee shops.
+Selecione Avançar: Adicionar habilidades cognitivas (Opcional).
+
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/b93dffb6-e437-485a-9eef-1c5d3bce4ba1)
+
+Na seção Anexar Serviços Cognitivos, selecione seu recurso de serviços de IA do Azure.
+
+Na seção Adicionar enriquecimentos:
+Altere o nome do Skillset para coffee-skillset.
+Marque a caixa de seleção Habilitar OCR e mesclar todo merged_content texto em campo
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/c197ebfa-0b96-451b-a17a-64ccfb8b2f82)
+
+selecione Avançar: Adicionar habilidades cognitivas (Opcional).
+
+Na seção Anexar Serviços Cognitivos, selecione seu recurso de serviços de IA do Azure.
+
+Na seção Adicionar enriquecimentos:
+Altere o nome do Skillset para coffee-skillset.
+Marque a caixa de seleção Habilitar OCR e mesclar todo merged_content texto em campo.
+Nota É importante selecionar Habilitar OCR para ver todas as opções de campo enriquecidas.
+
+
+Verifique se o campo Dados de origem está definido como merged_content.
+Altere o nível de granularidade de enriquecimento para Páginas (blocos de 5000 caracteres).
+Não selecione Habilitar enriquecimento incremental
+Selecione os seguintes campos enriquecidos:
+
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/44720ce9-d1e8-478b-92d7-6050441803aa)
+
+
+Habilidade Cognitiva	Parâmetro	Nome do campo
+Extrair nomes de locais	 	Locais
+Extrair frases-chave	 	Frases-chave
+Detectar sentimento	 	sentimento
+Gerar tags a partir de imagens	 	imageTags
+Gerar legendas a partir de imagens	 	imageCaption
+
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/9f233ae3-27a3-4e7f-b24a-cbeea905cca7)
+
+Em Salvar enriquecimentos em um repositório de conhecimento, selecione:
+Projeções de imagens
+Documentos
+Páginas
+Frases-chave
+Entidades
+Detalhes da imagem
+Referências de imagens
+
+Nota : 
+
+Nota Se um aviso solicitando uma Cadeia de Conexão da Conta de Armazenamento for exibido.
+
+Captura de tela que mostra o aviso da tela de conexão da conta de armazenamento com a opção "Escolher uma conexão existente" selecionada.
+
+Selecione Escolher uma conexão existente. Escolha a conta de armazenamento criada anteriormente.
+Clique em + Contêiner para criar um novo contêiner chamado knowledge-store com o nível de privacidade definido como Privado e selecione Criar.
+Selecione o contêiner de armazenamento de conhecimento e clique em Selecionar na parte inferior da tela.
+
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/57eb93ec-50e3-462a-af42-70524994f974)
