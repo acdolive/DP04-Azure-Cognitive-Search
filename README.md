@@ -170,3 +170,101 @@ Clique em + Contêiner para criar um novo contêiner chamado knowledge-store com
 Selecione o contêiner de armazenamento de conhecimento e clique em Selecionar na parte inferior da tela.
 
 ![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/57eb93ec-50e3-462a-af42-70524994f974)
+
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/5b4466c3-4275-4e79-a990-4a22bf2b78f5)
+
+elecione Projeções de blob do Azure: Documento. Uma configuração para Nome do contêiner com as exibições preenchidas automaticamente pelo contêiner do repositório de conhecimento. Não altere o nome do contêiner.
+
+Selecione Avançar: Personalizar índice de destino. Altere o nome do índice para coffee-index.
+
+Verifique se a chave está definida como metadata_storage_path. Deixe o nome do Sugeridor em branco e o modo de Pesquisa preenchido automaticamente.
+
+Revise as configurações padrão dos campos de índice. Selecione filtrável para todos os campos que já estão selecionados por padrão.
+
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/69422c5b-960a-4f25-a838-25d65f136d24)
+
+Selecione Avançar: Criar um indexador.
+
+Altere o nome do indexador para coffee-indexer.
+
+Deixe a Agenda definida como Uma vez.
+
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/4a8ec4a4-3e6f-4932-b321-46fabf71ee62)
+
+Expanda as opções Avançadas. Verifique se a opção Base-64 Encode Keys está selecionada, pois as chaves de codificação podem tornar o índice mais eficiente.
+
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/a791c1d5-1c4f-4e14-a2c7-13d0f46e8a72)
+
+Selecione Enviar para criar a fonte de dados, o conjunto de habilidades, o índice e o indexador. 
+
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/f448ea64-84ff-47ae-8672-3f9353bbc29b)
+
+O indexador é executado automaticamente e executa o pipeline de indexação, que:
+Extrai os campos de metadados do documento e o conteúdo da fonte de dados.
+Executa o conjunto de habilidades cognitivas para gerar campos mais enriquecidos.
+Mapeia os campos extraídos para o índice.
+
+Retorne à página de recursos da Pesquisa de IA do Azure. No painel esquerdo, em Gerenciamento de Pesquisa, selecione Indexadores. Selecione o indexador de café recém-criado. Aguarde um minuto e selecione &orarr; Atualize até que o Status indique êxito.
+
+Selecione o nome do indexador para ver mais detalhes.
+
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/edb9bbaa-0519-49e4-a038-674d5d04b2bc)
+
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/56753078-1e7c-4ee9-995b-f10b38b5124d)
+
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/c116037c-1ade-4298-b5e3-2f61762c52f5)
+
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/3a199606-08af-462d-a02f-24d2dbb2c6dd)
+
+## Consultar o índice
+Use o Gerenciador de pesquisa para escrever e testar consultas. O explorador de pesquisa é uma ferramenta incorporada no portal do Azure que oferece uma maneira fácil de validar a qualidade do seu índice de pesquisa. Você pode usar o Gerenciador de pesquisa para escrever consultas e revisar resultados em JSON.
+
+Na página Visão geral do serviço de Pesquisa, selecione Gerenciador de pesquisa na parte superior da tela.
+
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/7c1ecc99-d914-471b-a2e0-842a175456cf)
+
+Observe como o índice selecionado é o índice de café que você criou. Abaixo do índice selecionado, altere a exibição para JSON view.
+
+No campo Editor de consultas JSON, copie e cole:
+
+Código
+{
+    "search": "*",
+    "count": true
+}
+
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/e08e1fb5-30b2-4e10-9182-cacb82f74702)
+
+Selecione Pesquisar. A consulta de pesquisa retorna todos os documentos no índice de pesquisa, incluindo uma contagem de todos os documentos no campo @odata.count. O índice de pesquisa deve retornar um documento JSON contendo os resultados da pesquisa.
+
+Agora vamos filtrar por localização. No campo Editor de consultas JSON, copie e cole:
+Código
+{
+ "search": "locations:'Chicago'",
+ "count": true
+}
+Selecione Pesquisar. A consulta pesquisa todos os documentos no índice e filtra por revisões com um local de Chicago. Você deve ver no campo.3@odata.count
+
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/a9fb560f-5929-4466-b309-bc9014ef2130)
+
+
+Agora vamos filtrar por sentimento. No campo Editor de consultas JSON, copie e cole:
+Código
+{
+ "search": "sentiment:'negative'",
+ "count": true
+}
+Selecione Pesquisar. A consulta pesquisa todos os documentos no índice e filtra por avaliações com um sentimento negativo. Você deve ver no campo.1@odata.count
+
+Nota Veja como os resultados são classificados por . Esta é a pontuação atribuída pelo mecanismo de pesquisa para mostrar o quanto os resultados correspondem à consulta dada.@search.score
+
+![image](https://github.com/acdolive/DP04-Azure-Cognitive-Search/assets/162451624/6893d9e5-34b0-456a-8004-77268cb2c45b)
+
+
+Um dos problemas que podemos querer resolver é por que pode haver certas revisões. Vamos dar uma olhada nas frases-chave associadas à avaliação negativa. O que você acha que pode ser a causa da revisão?
+Revisar o repositório de conhecimento
+Vamos ver o poder do armazenamento de conhecimento em ação. Ao executar o assistente Importar dados, você também criou um repositório de conhecimento. Dentro da loja de conhecimento, você encontrará os dados enriquecidos extraídos pelas habilidades de IA persistem na forma de projeções e tabelas.
+
+No portal do Azure, navegue de volta para sua conta de armazenamento do Azure.
+
+No painel de menu esquerdo, selecione Contêineres. Selecione o contêiner de armazenamento de conhecimento.
